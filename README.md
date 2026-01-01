@@ -15,7 +15,8 @@ kubectl apply -f dashboard.yaml
 kubectl get pods -n rocketmq
 
 # Access dashboard
-kubectl port-forward svc/rocketmq-dashboard 8080:8080 -n rocketmq
+kubectl get svc rocketmq-dashboard -n rocketmq
+# Use NodePort to access via cluster nodes
 ```
 
 ## Components
