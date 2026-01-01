@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocketmq-broker
+  namespace: rocketmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rocketmq-broker
+  template:
+    metadata:
+      labels:
+        app: rocketmq-broker
+    spec:
+      containers:
+      - name: broker
+        image: apache/rocketmq:5.0.1
+        command: ["sh", "mqbroker", "-c", "/opt/rocketmq-5.0.1/conf/broker.conf"]
+        ports:
+        - containerPort: 10909
+        - containerPort: 10911
+        env:
+        - name: JAVA_OPT_EXT
+          value: "-server -Xms512m -Xmx512m"
+        volumeMounts:
+        - name: broker-config
+          mountPath: /opt/rocketmq-5.0.1/conf/broker.conf
+          subPath: broker.conf
+        - name: broker-config
+          mountPath: /opt/rocketmq-5.0.1/conf/plain_acl.yml
+          subPath: plain_acl.yml
+      volumes:
+      - name: broker-config
+        configMap:
+          name: rocketmq-broker-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rocketmq-broker
+  namespace: rocketmq
+spec:
+  selector:
+    app: rocketmq-broker
+  ports:
+  - name: vip
+    port: 10909
+    targetPort: 10909
+  - name: main
+    port: 10911
+    targetPort: 10911
+  type: ClusterIP
