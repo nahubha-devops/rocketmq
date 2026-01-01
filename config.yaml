@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rocketmq-broker-config
+  namespace: rocketmq
+data:
+  broker.conf: |
+    brokerClusterName=rocketmq-cluster
+    brokerName=a
+    brokerId=0
+    namesrvAddr=rocketmq-namesrv.rocketmq.svc.cluster.local:9876
+    defaultTopicQueueNums=4
+    autoCreateTopicEnable=true
+    autoCreateSubscriptionGroup=true
+    listenPort=10911
+    deleteWhen=04
+    fileReservedTime=48
+    mapedFileSizeCommitLog=1073741824
+    mapedFileSizeConsumeQueue=30000
+  plain_acl.yml: |
+    globalWhiteRemoteAddresses:
+    
+    accounts:
+      - accessKey: RoketMQ
+        secretKey: 12345678
+        whiteRemoteAddress:
+        admin: false
+        defaultTopicPerm: DENY
+        defaultGroupPerm: SUB
+        topicPerms:
+          - topicA=DENY
+          - topicB=PUB|SUB
+          - topicC=SUB
+        groupPerms:
+          - groupA=DENY
+          - groupB=PUB|SUB
+          - groupC=SUB
+      
+      - accessKey: protco
+        secretKey: protco123456
+        admin: true
